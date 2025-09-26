@@ -8,6 +8,7 @@
 
 /* Begin PBXFileReference section */
 		1D98E7AF2E85B125002E8D81 /* Single View App.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Single View App.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		AB6153B42E86B13A002CE525 /* Week03_HomeworkComments.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = Week03_HomeworkComments.md; path = ../Week03_HomeworkComments.md; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -32,6 +33,7 @@
 		1D98E7A62E85B125002E8D81 = {
 			isa = PBXGroup;
 			children = (
+				AB6153B42E86B13A002CE525 /* Week03_HomeworkComments.md */,
 				1D98E7B12E85B125002E8D81 /* Single View App */,
 				1D98E7B02E85B125002E8D81 /* Products */,
 			);
