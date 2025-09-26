@@ -32,3 +32,5 @@ Main concepts:
 Part 2 — Create a single view SwiftUI app
 
 Based on the Canvas-Explore example, I created a single view app that creates random dot art of 100 dots at a time. I mainly studied the example code and used Xcode’s Quick Help and Developer Documentation features to learn about the different structs and functions like Canvas and Path and their respective functions. The hardest part was figuring out how to make a circle with the Canvas and Path structs, but Apple’s Developer Documentation helped a lot with that.
+
+source for Canvas Developer Documentation: https://developer.apple.com/documentation/swiftui/canvas
