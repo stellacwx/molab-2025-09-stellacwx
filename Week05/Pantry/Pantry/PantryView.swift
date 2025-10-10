@@ -15,7 +15,7 @@ struct PantryItem {
 }
 
 struct PantryView: View {
-    @AppStorage("items") var itemsText: String = "Apple,🍎,5\nBanana,🍌,3\nOrange,🍊,2"
+    @AppStorage("items") var itemsText: String = ""
     
     @State private var showAdd: Bool = false
     @State private var showUse: Bool = false

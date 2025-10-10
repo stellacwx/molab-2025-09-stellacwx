@@ -1,4 +1,5 @@
 #  Pantry App
+Go to ContentView for the main view (works better in the simulator)
 
 ## General
 Utilizes AppStorage to create a virtual pantry
