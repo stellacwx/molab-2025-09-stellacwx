@@ -7,15 +7,19 @@
 
 import SwiftUI
 
+/*
 struct PantryItem {
     var itemName: String = ""
     var itemIcon: String = ""
     var itemAmountText: String = "0"
     var itemAmount: Int { Int(itemAmountText) ?? 0 }
 }
+ */
 
 struct PantryView: View {
-    @AppStorage("items") var itemsText: String = ""
+    // @AppStorage("items") var itemsText: String = ""
+    
+    @Environment(Document.self) var document
     
     @State private var showAdd: Bool = false
     @State private var showUse: Bool = false
@@ -24,6 +28,9 @@ struct PantryView: View {
     @State private var showShoppingList: Bool = false
     
     @State var newItem: PantryItem = PantryItem()
+    
+    @State var selectedItemID: UUID? = nil
+    @State var useAmountText: String = ""
 
     // items in the pantry as an array, working with itemsText AppStorage string
     /*
@@ -54,7 +61,7 @@ struct PantryView: View {
             // buttons on the top
             VStack {
                 HStack {
-                    
+                    /*
                     Button("Shopping List") {
                         showShoppingList = true
                     }
@@ -64,7 +71,7 @@ struct PantryView: View {
                     .cornerRadius(15)
                     .font(.system(size: 16, design: .monospaced))
                     .padding(.trailing, 90)
-                     
+                     */
                     NavigationLink(destination: ContentView().navigationBarBackButtonHidden()) {
                         Text("Close pantry")
                             .padding(10)
@@ -107,7 +114,7 @@ struct PantryView: View {
                     .background(Color.ocean)
                     .cornerRadius(15)
                     .font(.system(size: 16, design: .monospaced))
-                    
+                    /*
                     Button("Running low") {
                         showRunningLow = true
                     }
@@ -117,7 +124,7 @@ struct PantryView: View {
                     .background(Color.ocean)
                     .cornerRadius(15)
                     .font(.system(size: 13, design: .monospaced))
-                     
+                     */
                 }
             }
         }
@@ -134,7 +141,7 @@ struct PantryView: View {
                     Text("Add an item to the pantry:")
                         .padding(15)
                         .foregroundStyle(Color.cream)
-                        .font(.system(size: 16, design: .monospaced))
+                        .font(.system(size: 16, weight: .bold, design: .monospaced))
                     TextField("Name", text: $newItem.itemName)
                         .padding(10)
                         .foregroundStyle(Color.cream)
@@ -156,18 +163,28 @@ struct PantryView: View {
                         .cornerRadius(15)
                         .font(.system(size: 16, design: .monospaced))
                         .frame(width: 200)
-                    Button("Add") {
-                        if newItem.itemAmount > 0 {
-                            itemsText.append("\(newItem.itemName),\(newItem.itemIcon),\(newItem.itemAmount)\n")
+                    HStack {
+                        Button("Add") {
+                            guard newItem.itemAmount > 0 else { return }
+                            document.addItem(item: newItem)
+                            newItem = PantryItem()
+                            showAdd = false
                         }
-                        newItem = PantryItem()
-                        showAdd = false
+                        .padding(10)
+                        .foregroundStyle(Color.cream)
+                        .background(Color.copper)
+                        .cornerRadius(15)
+                        .font(.system(size: 16, design: .monospaced))
+                        Button("Cancel") {
+                            newItem = PantryItem()
+                            showAdd = false
+                        }
+                        .padding(10)
+                        .foregroundStyle(Color.cream)
+                        .background(Color.copper)
+                        .cornerRadius(15)
+                        .font(.system(size: 16, design: .monospaced))
                     }
-                    .padding(10)
-                    .foregroundStyle(Color.cream)
-                    .background(Color.copper)
-                    .cornerRadius(15)
-                    .font(.system(size: 16, design: .monospaced))
                 }
             }
             
@@ -177,8 +194,63 @@ struct PantryView: View {
                     .frame(width: 300, height: 300)
                     .cornerRadius(20)
                 VStack {
+                    Text("Use from the pantry")
+                        .font(.system(size: 16, weight: .bold, design: .monospaced))
+                        .foregroundStyle(Color.cream)
+                        .padding(.top, 20)
+                    if document.model.items.isEmpty {
+                        Text("Your pantry is empty.")
+                            .font(.system(size: 16, design: .monospaced))
+                            .foregroundStyle(Color.cream)
+                    } else {
+                        Picker("Item", selection: $selectedItemID) {
+                            ForEach(document.model.items) { item in
+                                HStack {
+                                    // Text(item.itemIcon)
+                                    Text(item.itemName)
+                                    Text("(\(item.itemAmount))")
+                                }
+                                .tag(item.id as UUID?)
+                            }
+                        }
+                        TextField("Amount to use", text: $useAmountText)
+                            .padding(10)
+                            .foregroundStyle(Color.cream)
+                            .background(Color.copper)
+                            .cornerRadius(15)
+                            .font(.system(size: 16, design: .monospaced))
+                            .frame(width: 200)
+                        HStack {
+                            Button("Confirm") {
+                                guard selectedItemID != nil else { return }
+                                var item = document.model.items.first(where: { $0.id == selectedItemID! })!
+                                let amount = Int(useAmountText.trimmingCharacters(in: .whitespaces)) ?? 0
+                                guard amount > 0 else { return }
+                                if amount > item.itemAmount {
+                                    return
+                                }
+                                let newAmount = item.itemAmount - amount
+                                item.itemAmountText = String(newAmount)
+                                if newAmount == 0 {
+                                    document.deleteItem(id: item.id)
+                                } else {
+                                    document.updateItem(item: item)
+                                }
+                                selectedItemID = nil
+                                useAmountText = ""
+                                showUse = false
+                            }
+                        }
+                        .padding(10)
+                        .foregroundStyle(Color.cream)
+                        .background(Color.copper)
+                        .cornerRadius(15)
+                        .font(.system(size: 16, design: .monospaced))
+                        .pickerStyle(.menu)
+                        
+                    }
                     Button("Clear pantry") {
-                        itemsText = ""
+                        document.model.items.removeAll()
                     }
                     .padding(10)
                     .foregroundStyle(Color.cream)
@@ -208,57 +280,47 @@ struct PantryView: View {
                             .foregroundStyle(Color.cream)
                             .padding(.top, 20)
                         ScrollView {
-                            let items = itemsText.split(separator: "\n")
-                            if itemsText.isEmpty {
+                            // let items = itemsText.split(separator: "\n")
+                            if document.model.items.isEmpty {
                                 Text("You have no items in your pantry.")
                                     .font(.system(size: 16, design: .monospaced))
                                     .foregroundStyle(Color.cream)
                             } else {
                                 VStack {
-                                    ForEach(Array(items), id: \.self) { item in
-                                        let array = item.split(separator: ",")
-                                        if array.count == 3 {
-                                        let name = array[0]
-                                        let icon = array[1]
-                                        let amount = array[2]
-                                        
+                                    ForEach(document.model.items) { item in
                                         HStack(spacing: 8) {
-                                            Text(icon)
+                                            Text(item.itemIcon)
                                                 .font(.system(size: 16, design: .monospaced))
                                                 .foregroundStyle(Color.cream)
-                                            Text(name)
+                                            Text(item.itemName)
                                                 .font(.system(size: 16, design: .monospaced))
                                                 .foregroundStyle(Color.cream)
                                             Spacer()
-                                            Text(amount)
+                                            Text("\(item.itemAmount)")
                                                 .font(.system(size: 16, design: .monospaced))
                                                 .foregroundStyle(Color.cream)
                                         }
                                         .font(.system(size: 16, design: .monospaced))
                                         .foregroundStyle(Color.cream)
-                                        }
                                     }
                                 }
                             }
                         }
-                        .padding(10)
-                        Button("Close") {
-                            showList = false
-                        }
-                        .padding(10)
-                        .foregroundStyle(Color.cream)
-                        .background(Color.copper)
-                        .cornerRadius(15)
-                        .font(.system(size: 16, design: .monospaced))
-                        Spacer(minLength: 10)
                     }
+                    .padding(10)
+                    Spacer()
+                    Button("Close") {
+                        showList = false
+                    }
+                    .padding(10)
+                    .foregroundStyle(Color.cream)
+                    .background(Color.copper)
+                    .cornerRadius(15)
+                    .font(.system(size: 16, design: .monospaced))
+                    Spacer(minLength: 10)
                 }
                 .frame(width: 350, height: 400)
             }
-            
-            
-            
-            
             // press Running low button
             if showRunningLow {
                 Color.autumn.ignoresSafeArea()
@@ -293,4 +355,5 @@ struct PantryView: View {
 
 #Preview {
     PantryView()
+        .environment(Document())
 }

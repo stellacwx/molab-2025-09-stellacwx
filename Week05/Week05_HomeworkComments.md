@@ -11,7 +11,7 @@ Difficulties:
 
 Continuing Issues with this app:
 - Having difficulty figuring out an efficient way to store and update the pantry items, this issue becomes very prominent in trying to figure out how to "use" an item (delete it or decrease the amount of it)
-    - Currently, the onle way to edit items already in the list is to completely clear the pantry
+    - Currently, the only way to edit items already in the list is to completely clear the pantry
 - Have not yet figured out how to actually visualize the items on the shelves in the UI
 
 Improvements:
