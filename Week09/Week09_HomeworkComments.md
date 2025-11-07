@@ -9,3 +9,6 @@
 
 ## Reflection
 This week, I recreated the FireCards firebase tutorial app and linked it to a  firebase project. Following this tutorial was a little hard, and I had a little trouble where my version of the app was not syncing up with the firebase project, and the cards were not showing up in the database. Deleting and recreating the firebase project managed to fix this. After this obstacle, which took a while to figure out, the rest of the tutorial was not too hard to follow. However, I still don't understand how the app switches between users and will probably need to find some more tutorials to fully understand how to implement firebase in an app of my own design, which I plan on incorporating into my final project.
+
+## Final Project Proposal
+I wanted to make a project about food. Currently, I'm thinking about making a journal-type app with a social component that has customizable layouts and will incorporate firebase authentication with shareable cards for each entry. However this might be a little basic and I still want to find a way to level up the app.
