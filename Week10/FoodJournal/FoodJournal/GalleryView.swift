@@ -24,7 +24,7 @@ struct GalleryView: View {
     
     var body: some View {
         VStack {
-            Text("Savored")
+            Text("Journal")
                 .font(Font.system(size: 32, weight: .bold, design: .monospaced))
                 .padding()
             let columns = [GridItem(.adaptive(minimum: 100))]
